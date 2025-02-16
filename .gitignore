@@ -38,3 +38,7 @@ Desktop.ini
 
 # .NET Core
 project.lock.json
+
+
+
+.DS_Store
