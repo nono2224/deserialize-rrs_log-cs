@@ -1,0 +1,40 @@
+# Visual Studio
+*.sln.DotSettings
+*.user
+*.suo
+*.userprefs
+*.pidb
+*.booproj
+*.ide
+[Bb]in/
+[Oo]bj/
+.vs/
+TestResults/
+[Tt]humbs.db
+[Dd]otSettings.user
+
+# Rider
+.idea
+
+# Build output
+*.o
+*.a
+*.exe
+*.dll
+*.pdb
+*.nupkg
+
+# OS Generated
+Thumbs.db
+Desktop.ini
+
+# Packages
+**/packages/*
+!**/packages/build/
+!**/packages/repositories.config
+
+# NuGet
+*.nupkg
+
+# .NET Core
+project.lock.json
