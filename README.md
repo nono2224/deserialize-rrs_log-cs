@@ -2,7 +2,7 @@
 
 c#言語でRRSログをデシリアライズするコード
 
-#　つかいかた？
+# つかいかた？
 
 ## 1. クローン
 `git clone https://github.com/nono2224/deserialize-rrs_log-cs.git`
