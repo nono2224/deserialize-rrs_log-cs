@@ -42,3 +42,7 @@ project.lock.json
 
 
 .DS_Store
+
+output
+
+output.json
