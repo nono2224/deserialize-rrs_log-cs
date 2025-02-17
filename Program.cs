@@ -1,5 +1,4 @@
 ﻿using Google.Protobuf;
-using Google.Protobuf.WellKnownTypes; // Timestamp, Duration などを使う場合
 using Google.Protobuf.Reflection;
 using System;
 using System.IO;
@@ -10,22 +9,16 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        // ファイルからログデータを読み込む
-        byte[] receivedData;
-        try
-        {
-            receivedData = File.ReadAllBytes("INITIAL_CONDITIONS"); // Your log file
-        }
-        catch (IOException e)
-        {
-            Console.WriteLine($"Error reading file: {e.Message}");
-            return;
-        }
+        //ログファイルがあるディレクトリのパスを指定
+        string logDirectoryPath = "./filePath"; // ここをログファイルがあるディレクトリに変更
 
-        // LogProto のデシリアライズ
-        LogProto log = LogProto.Parser.ParseFrom(receivedData);
+        //出力先のディレクトリのパスを指定。同じ階層に"output"ディレクトリを作成する。
+        string outputDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "output");
 
-        // 1. JsonFormatter を使う (整形されたJSON)
+        // 出力ディレクトリが存在しない場合は作成
+        Directory.CreateDirectory(outputDirectoryPath);
+
+        // JsonFormatter の設定 (一度だけ作成)
         JsonFormatter formatter = new JsonFormatter(
             new JsonFormatter.Settings(true)
                 .WithIndentation("  ")
@@ -38,7 +31,6 @@ public class Program
                     ConfigLogProto.Descriptor,
                     UpdatesLogProto.Descriptor,
                     EndLogProto.Descriptor,
-                    // RCRSProto.proto 内のすべての MessageDescriptor を追加
                     MessageProto.Descriptor,
                     MessageListProto.Descriptor,
                     MessageComponentProto.Descriptor,
@@ -55,24 +47,74 @@ public class Program
                     EdgeListProto.Descriptor,
                     EdgeProto.Descriptor,
                     ChangeSetProto.Descriptor,
-                    ChangeSetProto.Types.EntityChangeProto.Descriptor // Nested type
+                    ChangeSetProto.Types.EntityChangeProto.Descriptor
                 ))
                 .WithFormatEnumsAsIntegers(false)
                 .WithPreserveProtoFieldNames(false)
         );
 
+        // 指定されたディレクトリ内のすべてのファイルを処理
+        ProcessDirectory(logDirectoryPath, outputDirectoryPath, formatter);
 
-        string jsonString = formatter.Format(log); // LogProto オブジェクトを JSON 文字列に変換
-        Console.WriteLine(jsonString);
+    }
+    //ディレクトリを再帰的に処理する関数
+    static void ProcessDirectory(string targetDirectory, string outputDirectory, JsonFormatter formatter)
+    {
+      try{
+        // 指定されたディレクトリ内のすべてのファイルを処理
+        string[] fileEntries = Directory.GetFiles(targetDirectory);
+        foreach (string filePath in fileEntries)
+        {
+            ProcessFile(filePath, outputDirectory, formatter);
+        }
 
-        // (オプション) JSON 文字列をファイルに保存
+        // 指定されたディレクトリ内のすべてのサブディレクトリを再帰的に処理
+        string[] subdirectoryEntries = Directory.GetDirectories(targetDirectory);
+        foreach (string subdirectory in subdirectoryEntries)
+        {
+            //サブディレクトリ名を取得
+            string subDirName = Path.GetFileName(subdirectory);
+            //出力先にサブディレクトリを作成
+            string newOutputDir = Path.Combine(outputDirectory,subDirName);
+            Directory.CreateDirectory(newOutputDir);
+
+            ProcessDirectory(subdirectory, newOutputDir, formatter);
+        }
+      }
+      catch (Exception e)
+        {
+            Console.WriteLine($"Error processing directory {targetDirectory}: {e.Message}");
+            // 必要であれば、ここで例外を再スローするか、他のエラー処理を行う
+        }
+    }
+
+    //ファイルを処理する関数
+    static void ProcessFile(string filePath, string outputDirectory, JsonFormatter formatter)
+    {
         try
         {
-            File.WriteAllText("output.json", jsonString);
+            // ファイルからログデータを読み込む
+            byte[] receivedData = File.ReadAllBytes(filePath);
+
+            // LogProto のデシリアライズ
+            LogProto log = LogProto.Parser.ParseFrom(receivedData);
+
+            // JSON 文字列に変換
+            string jsonString = formatter.Format(log);
+
+            // 出力ファイルパスを作成 (入力ファイル名 + .json)
+            string outputFileName = Path.GetFileNameWithoutExtension(filePath) + ".json";
+            string outputFilePath = Path.Combine(outputDirectory, outputFileName);
+
+            // JSON 文字列をファイルに保存
+            File.WriteAllText(outputFilePath, jsonString);
+            Console.WriteLine($"{filePath} was converted and saved as {outputFilePath}");
         }
-        catch (IOException e)
+
+        catch (Exception e)
         {
-            Console.WriteLine($"Error writing to file: {e.Message}");
+            Console.WriteLine($"Error processing file {filePath}: {e.Message}");
+            //ログファイルとして不適切なファイルが読み込まれた場合、処理を続行
         }
     }
 }
