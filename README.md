@@ -7,17 +7,20 @@ c#言語でRRSログをデシリアライズするコード
 ### 1. クローン
 `git clone https://github.com/nono2224/deserialize-rrs_log-cs.git`
 
-### 2. 依存関係の復元
+### 2. 作業ディレクトリの移動
+`cd deserialize-rrs_log-cs`
+
+### 3. 依存関係の復元
 `dotnet restore`
 
-### 3. ビルド
+### 4. ビルド
 `dotnet build`
 
-### 4. 入力ファイルを記述
+### 5. 入力ファイルを記述
 `Program.cs`ファイル内の`receivedData`部分に入力するログファイルのパスを記述
 
-### 5. 実行
+### 6. 実行
 `dotnet run`
 
-### 6. おわり
+### 7. おわり
 `output.json`ファイルが出力され，ここにデシリアライズされたログデータが格納されます
