@@ -9,7 +9,8 @@ c#言語でRRSログをデシリアライズするコード
 
 ### 2. 作業ディレクトリとブランチの移動
 `cd deserialize-rrs_log-cs`
-`git checkout ad`
+
+`git checkout allFile`
 
 ### 3. 依存関係の復元
 `dotnet restore`
