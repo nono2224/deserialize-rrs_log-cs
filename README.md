@@ -19,7 +19,7 @@ RoboCupRescue Simulation においてシミュレーションが終了すると�
 GitHub より本リポジトリをクローンします
 
 ```sh
-git clone https://github.com/nono2224/deserialize-rrs_log.git
+git clone https://github.com/nono2224/deserialize-rrs_log-cs.git
 ```
 
 ### 2. リポジトリへ移動
