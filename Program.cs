@@ -14,7 +14,7 @@ public class Program
         byte[] receivedData;
         try
         {
-            receivedData = File.ReadAllBytes("INITIAL_CONDITIONS"); // Your log file
+            receivedData = File.ReadAllBytes("filePath"); // Your log file
         }
         catch (IOException e)
         {
